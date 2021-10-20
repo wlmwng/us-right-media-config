@@ -73,3 +73,10 @@ PUT /inca_alias/_settings
     "index.max_docvalue_fields_search": 200
 }
 ```
+
+
+## Fix timezone display
+
+Kibana defaults to using the browser's timezone. Change it to `UTC`.
+- "Management" -> "Advanced Settings" -> "Timezone for date formatting"
+- select "UTC"
