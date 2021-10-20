@@ -4,24 +4,35 @@ This repo contains most of the files required for setting up  US right-wing medi
 The exceptions are the two INCA files, `dockerfile-inca` and `requirements_docker.txt`. <br>
 
 ### clone the project-related directories
-1. create a new directory on your machine and clone these four repos into it. The `inca`, `urlExpander`, and `us-right-media` subdirectories will be mounted to the `inca-myusername` container. <br>
-
+- create a new directory on your machine and clone these four repos into it. The `inca`, `urlExpander`, and `us-right-media` subdirectories will be mounted to the `inca-myusername` container. <br>
   - https://github.com/wlmwng/inca (usrightmedia/[branch])
   - https://github.com/wlmwng/urlExpander (develop)
   - https://github.com/wlmwng/us-right-media (develop)
   - https://github.com/wlmwng/us-right-media-config (main)
 
-If you're reviewing a PR, please use `git switch <branch>` to get that version of the repo.
+- If you're reviewing a PR, please use `git switch <branch>` to get that version of the repo.
+
+### copy `02-intermediate-data.tar.gz` from the server
+- To use the scraping scripts in `<PATH-TO-CLONED-REPO>/us-right-media/usrightmedia/code/04-inca-prep`, copy the compressed data file from the server (378M).
+  - does this command work for you too?
+```
+rsync -chavzP --stats <USERNAME>@tux02ascor.fmg.uva.nl:/home/wailam/us-right-media/usrightmedia/data/02-intermediate-data.tar.gz <PATH-TO-CLONED-REPO>/us-right-media/usrightmedia/data
+```
+- decompress the file
+```
+tar -xvzf 02-intermediate-data.tar.gz
+```
+
 
 ### setup the config directory
-2. navigate to `us-right-media-config` directory and add a `.env` file with the following lines
+- navigate to `us-right-media-config` directory and add a `.env` file with the following lines
 ```
 COMPOSE_PROJECT_NAME=usrightmedia
 USERNAME=myusername
 JUPYTER_TOKEN=changeme
 ```
 
-3. while inside the `us-right-media-config` directory, bring up the containers with Docker Compose version 1.27.4
+- while inside the `us-right-media-config` directory, bring up the containers with Docker Compose version 1.27.4
 ```
 docker-compose up -d
 ```
