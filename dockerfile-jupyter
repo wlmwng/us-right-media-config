@@ -1,0 +1,2 @@
+FROM jupyter/minimal-notebook:2021-10-17
+WORKDIR /home/jovyan/work

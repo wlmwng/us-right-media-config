@@ -1,0 +1,103 @@
+version: "3.8"
+
+services:
+
+  inca:
+    build:
+      context: ../inca
+      dockerfile: dockerfile-inca
+    image: wlmwng/us-right-media:inca
+    container_name: "inca-${USERNAME}"
+    restart: unless-stopped
+    environment:
+      - JUPYTER_ENABLE_LAB=yes
+      - JUPYTER_TOKEN=${JUPYTER_TOKEN}
+    ports:
+      - "127.0.0.1:8889:8888"
+    volumes:
+      - type: bind
+        source: ../urlExpander
+        target: /home/jovyan/work/urlExpander
+      - type: bind
+        source: ../inca
+        target: /home/jovyan/work/inca
+      - type: bind
+        source: ../us-right-media
+        target: /home/jovyan/work/us-right-media
+    networks:
+      - esnet
+
+  jupyter:
+    build:
+      context: .
+      dockerfile: dockerfile-jupyter
+    image: wlmwng/us-right-media:jupyter
+    container_name: "jupyter-${USERNAME}"
+    restart: unless-stopped
+    environment:
+      - JUPYTER_ENABLE_LAB=yes
+      - JUPYTER_TOKEN=${JUPYTER_TOKEN}
+    ports:
+      - "127.0.0.1:8888:8888"
+    volumes:
+      - type: bind
+        source: ../urlExpander
+        target: /home/jovyan/work/urlExpander
+      - type: bind
+        source: ../inca
+        target: /home/jovyan/work/inca
+      - type: bind
+        source: ../us-right-media
+        target: /home/jovyan/work/us-right-media
+    networks:
+      - esnet
+
+  elasticsearch:
+    build:
+      context: .
+      dockerfile: dockerfile-elasticsearch
+    container_name: "elasticsearch-${USERNAME}"
+    image: wlmwng/us-right-media:elasticsearch-6.8.0
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:9200:9200"
+    expose:
+      - "9200"
+    environment:
+      - discovery.type=single-node
+      - bootstrap.memory_lock=true
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - type: volume
+        source: esdata
+        target: /usr/share/elasticsearch/data
+    networks:
+      - esnet
+
+  kibana:
+    build:
+      context: .
+      dockerfile: dockerfile-kibana
+    container_name: "kibana-${USERNAME}"
+    image: wlmwng/us-right-media:kibana-enhanced-6.8.0
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:5601:5601"
+    environment:
+      - ELASTICSEARCH_HOSTS="http://elasticsearch:9200"
+    networks:
+      - esnet
+    depends_on:
+      - elasticsearch
+      
+networks:
+  esnet:
+    name: "esnet-${USERNAME}"
+
+volumes:
+  esdata:
+    name: "esdata-${USERNAME}"
+    driver: local
