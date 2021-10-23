@@ -6,12 +6,34 @@ Use Kibana's Dev Tools to send HTTP requests to Elasticsearch.
 - "Management" -> "Kibana: Saved Objects" -> "Import"
 - Import `export_from_tux02ascor.json`
 
-## Fix mapping
+## Mapping
 
-The project version of INCA connects automatically to `inca_alias`. Assuming scraping has already started, documents were added directly to an index called `inca_alias` (rather than to an actual alias).
-To fix this, make a new index called `inca` and re-index the documents to it.
-1. Copy-paste the HTTP request in `inca_index_and_mapping.txt` into Dev Tools; send it.
-2. Re-index the old `inca_alias` index into the new `inca` index.
+### Setup mapping if no `inca_alias` index has been created yet (INCA scraping has not started)
+1. Copy-paste the HTTP request in `inca_index_and_mapping.txt` into Dev Tools
+2. Add the alias
+```
+POST _aliases
+{
+    "actions": [
+        {
+            "add": {
+                "index": "inca",
+                "alias": "inca_alias"
+            }
+        }
+    ]
+}
+```
+3. When INCA starts adding documents, it should be sending them to `inca_alias`, which then points to the actual index called `inca`.
+
+### Fix mapping if `inca_alias` index already exists (INCA scraping already started)
+
+The project version of INCA connects automatically to `inca_alias`. When scraping has already started, documents are added directly to an *index* called `inca_alias` (rather than to an actual alias). The Kibana dashboard, "US Right Media (URLs)", refers to `inca_alias` as well.
+
+To make `inca_alias` become an actual alias rather than an index:
+1. Stop scraping
+2. Copy-paste the HTTP request in `inca_index_and_mapping.txt` into Dev Tools
+3. Re-index the old `inca_alias` index into the new `inca` index
 
 ```
 POST _reindex
@@ -24,12 +46,11 @@ POST _reindex
     }
 }
 ```
-- Since INCA and the Kibana dashboard, "US Right Media (URLs)", refer to `inca_alias`, make `inca_alias` actually be an alias rather than an index.
-1. delete the existing `inca_alias` index
+4. delete the existing `inca_alias` index
 ```
 DELETE /inca_alias
 ```
-2.  and correctly add the alias as an alternative way to reference the `inca` index
+5.  and correctly add the alias as an alternative way to reference the `inca` index
 ```
 POST _aliases
 {
