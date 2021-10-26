@@ -1,0 +1,78 @@
+version: "3.8"
+
+services:
+
+  inca:
+    build:
+      context: ../inca-dev
+      dockerfile: dockerfile-inca
+    image: wlmwng/us-right-media:inca-dev
+    container_name: "inca-dev-${USERNAME}"
+    restart: unless-stopped
+    environment:
+      - JUPYTER_ENABLE_LAB=yes
+      - JUPYTER_TOKEN=${JUPYTER_TOKEN}
+    ports:
+      - "127.0.0.1:8889:8888"
+    volumes:
+      - type: bind
+        source: ../urlExpander-dev
+        target: /home/jovyan/work/urlExpander-dev
+      - type: bind
+        source: ../inca-dev
+        target: /home/jovyan/work/inca-dev
+      - type: bind
+        source: ../us-right-media-dev
+        target: /home/jovyan/work/us-right-media-dev
+    networks:
+      - esnet-dev
+
+  elasticsearch:
+    build:
+      context: .
+      dockerfile: dockerfile-elasticsearch
+    container_name: "elasticsearch-dev-${USERNAME}"
+    image: wlmwng/us-right-media:elasticsearch-6.8.0-dev
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:9201:9200"
+    expose:
+      - "9200"
+    environment:
+      - discovery.type=single-node
+      - bootstrap.memory_lock=true
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - type: volume
+        source: esdata-dev
+        target: /usr/share/elasticsearch/data
+    networks:
+      - esnet-dev
+
+  kibana:
+    build:
+      context: .
+      dockerfile: dockerfile-kibana
+    container_name: "kibana-dev-${USERNAME}"
+    image: wlmwng/us-right-media:kibana-enhanced-6.8.0-dev
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:5602:5601"
+    environment:
+      - ELASTICSEARCH_HOSTS="http://elasticsearch:9200"
+    networks:
+      - esnet-dev
+    depends_on:
+      - elasticsearch
+      
+networks:
+  esnet-dev:
+    name: "esnet-dev-${USERNAME}"
+
+volumes:
+  esdata-dev:
+    name: "esdata-dev-${USERNAME}"
+    driver: local
