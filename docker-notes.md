@@ -16,6 +16,10 @@ ps aux | grep 9200
 ps aux | grep 5601
 ```
 
+## docker-compose with non-default .yml files
+- `docker-compose -f docker-compose-dev.yml up -d`
+- `docker-compose -f docker-compose-dev.yml down`
+
 ## tux02ascor server permissions
 - recursively chown/chmod to fix messy permissions (jovyan, my server UID, and root). This makes files readable/writable whether I'm logged in as myself on the tux02ascor or if I'm logged in as jovyan within the JupyterLab container
     - owner: my UID on the server
@@ -25,10 +29,10 @@ chown <UID>:users -R inca
 chown <UID>:users -R urlExpander
 chown <UID>:users -R us-right-media
 
-chmod -R 775 inca
-chmod -R 775 urlExpander
-chmod -R 775 us-right-media
-chmod -R 775 us-right-media-config
+chmod 775 -R inca
+chmod 775 -R urlExpander
+chmod 775 -R us-right-media
+chmod 775 -R us-right-media-config
 ```
 
 ## Manage Docker images
