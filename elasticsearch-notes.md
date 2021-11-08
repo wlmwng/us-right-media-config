@@ -263,3 +263,53 @@ GET inca_alias/_search
   }
 }
 ```
+
+- count of outlet documents which were (re-)tweeted 1+ times (note: this query doesn't count the number of (re-)tweet instances)
+```
+GET inca_alias/_search?size=0
+{
+  "aggs": {
+    "categories": {
+      "terms": {
+        "field": "doctype",
+        "order": { "_key": "asc" },
+        "size": 13
+      }
+  }},
+  "query": {
+    "bool": {
+      "filter": [
+        {
+          "terms": {
+            "doctype": [
+              "americanrenaissance",
+              "breitbart",
+              "dailycaller",
+              "dailystormer",
+              "foxnews",
+              "gatewaypundit",
+              "infowars",
+              "newsmax",
+              "oneamericanews",
+              "rushlimbaugh",
+              "seanhannity",
+              "vdare",
+              "washingtonexaminer"
+            ]
+          }
+        },
+        {
+          "term": {
+            "should_include": "true"
+          }
+        },
+        {
+          "term": {
+            "tweets2_url_match_ind": "true"
+          }
+        }
+      ]
+    }
+  }
+}
+```
