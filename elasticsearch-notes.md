@@ -41,6 +41,27 @@ PUT /inca_alias/_mapping/doc
 }
 ```
 
+- Add a new field with `text` and `keyword` types
+```
+PUT /inca_alias/_mapping/doc
+{
+  "properties": {
+    "standardized_url_2": {
+      "type": "text",
+      "fields": {
+        "exact": {
+          "type": "text",
+          "analyzer": "whitespace"
+        },
+        "keyword": {
+          "type": "keyword"
+        }
+      }
+    }
+  }
+}
+```
+
 ## Delete documents
 
 - delete documents which have a specified doctype
