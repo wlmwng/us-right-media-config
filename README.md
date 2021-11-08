@@ -6,7 +6,7 @@ The exceptions are the two INCA files, `dockerfile-inca` and `requirements-docke
 ## Clone the project-related repositories
 - create a new directory on your machine and clone these four repos into it. The `inca`, `urlExpander`, and `us-right-media` subdirectories will be mounted to the JupyterLab container. <br>
   - https://github.com/wlmwng/inca (`usrightmedia/[branch]`)
-  - https://github.com/wlmwng/urlExpander (`develop`)
+  - https://github.com/wlmwng/urlExpander (`news_api`)
   - https://github.com/wlmwng/us-right-media (`develop`)
   - https://github.com/wlmwng/us-right-media-config (`local`)
     - `docker-compose.yml` does not have memory limits as it runs on the server
