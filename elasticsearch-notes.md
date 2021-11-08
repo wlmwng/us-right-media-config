@@ -105,6 +105,52 @@ POST /inca_alias/_delete_by_query
 
 ## Search queries
 
+- Get min date and max date (tweets2)
+```
+GET /inca_alias/_search?size=0
+{  "query": {
+    "terms": {
+      "doctype": [
+       "tweets2"
+      ]
+    }
+  },
+    "aggs" : {
+       "min_date": {"min": {"field": "created_at", "format": "yyyy-MM-dd"}},
+       "max_date": {"max": {"field": "created_at", "format": "yyyy-MM-dd"}}
+    }
+}
+```
+
+- Get min date and max date (outlet documents)
+```
+GET /inca_alias/_search?size=0
+{  "query": {
+    "terms": {
+      "doctype": [
+        "americanrenaissance",
+        "breitbart",
+        "dailycaller",
+        "dailystormer",
+        "foxnews",
+        "gatewaypundit",
+        "infowars",
+        "newsmax",
+        "oneamericanews",
+        "rushlimbaugh",
+        "seanhannity",
+        "vdare",
+        "washingtonexaminer"
+      ]
+    }
+  },
+    "aggs" : {
+       "min_date": {"min": {"field": "publish_date", "format": "yyyy-MM-dd"}},
+       "max_date": {"max": {"field": "publish_date", "format": "yyyy-MM-dd"}}
+    }
+}
+```
+
 - Get documents which match the specified `_id`
 ```
 GET inca_alias/_search
