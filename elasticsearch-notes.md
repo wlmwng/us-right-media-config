@@ -145,7 +145,7 @@ GET inca_alias/_search
 ```
 
 - Count and percent of documents per outlet which should be included for NLP tasks
-
+- https://georgebridgeman.com/posts/sum-of-boolean-aggregation/
 ```
 GET inca_alias/_search
 {
