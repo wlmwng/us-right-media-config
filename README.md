@@ -10,7 +10,8 @@ The exceptions are the two INCA files, `dockerfile-inca` and `requirements-docke
   - https://github.com/wlmwng/us-right-media (`develop`)
   - https://github.com/wlmwng/us-right-media-config (`local`)
     - `docker-compose.yml` does not have memory limits as it runs on the server
-    - `docker-compose-local.yml` is useful for local testing by limiting each container's memory usage to 2GB. Remove the existing `docker-compose.yml` and rename `docker-compose-local.yml` to `docker-compose.yml`.
+    - `docker-compose-local.yml` is useful for local testing by limiting each container's memory usage to 2GB.<br>
+      `docker-compose -f docker-compose-local.yml up -d`
 
 ## Create the Docker containers
 ### 1. Setup the config directory
