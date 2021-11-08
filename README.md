@@ -8,9 +8,12 @@ The exceptions are the two INCA files, `dockerfile-inca` and `requirements-docke
   - https://github.com/wlmwng/inca (`usrightmedia/[branch]`)
   - https://github.com/wlmwng/urlExpander (`news_api`)
   - https://github.com/wlmwng/us-right-media (`develop`)
-  - https://github.com/wlmwng/us-right-media-config (`local`)
-    - `docker-compose.yml` does not have memory limits as it runs on the server
-    - `docker-compose-local.yml` is useful for local testing by limiting each container's memory usage to 2GB.<br>
+  - https://github.com/wlmwng/us-right-media-config (`main`)
+    - `docker-compose.yml` does not have memory limits as it runs on the server <br>
+      `docker-compose up -d`
+    - `docker-compose-dev.yml` does not have memory limits as it runs on the server <br>
+      `docker-compose -f docker-compose-dev.yml up -d`
+    - `docker-compose-local.yml` is useful for local testing by limiting each container's memory usage to 2GB <br>
       `docker-compose -f docker-compose-local.yml up -d`
 
 ## Create the Docker containers
@@ -197,7 +200,7 @@ rsync -chavzP --stats <USERNAME>@tux02ascor.fmg.uva.nl:/home/wailam/us-right-med
 tar -xvzf 02-intermediate-data.tar.gz
 ```
 
-### `esdata-wailam-20211020-fixed-indices.tar.gz` (3.3GB): copy a snapshot of the collected data to hydrate a local Elasticsearch container
+### `esdata-wailam-20211020.tar.gz` (3.3GB): copy a snapshot of the collected data to hydrate a local Elasticsearch container
 - The compressed tar archive is a backup of a Docker volume. It contains:
   - 889,739 tweet objects from the accounts of congressional Republicans
   - 221,460 scraped documents from 13 outlets
@@ -222,4 +225,4 @@ rsync -chavzP --stats <USERNAME>@tux02ascor.fmg.uva.nl:/home/wailam/volumes_back
 
 3. restore the Elasticsearch container by removing any existing data volume and replacing it with a new volume containing the backup data [(see the demo instructions)](https://github.com/wlmwng/docker-elastic-demo#restore-from-backup)
 
-**Once scraping completes, the `esdata-wailam-20211020-fixed-indices.tar.gz` will be replaced with a backup containing all (re-)tweets and scraped articles. The Elasticsearch documents containing media outlet articles will have a `googleword2vec_article_maintext` key (for news event clustering).**
+**Once scraping completes, the `esdata-wailam-20211020.tar.gz` will be replaced with a backup containing all (re-)tweets and scraped articles.**

@@ -151,13 +151,22 @@ GET /inca_alias/_search?size=0
 }
 ```
 
-- Get documents which match the specified `_id`
+- Get documents which match the specified `_id` or which match one value inside a list of `_id`s
 ```
 GET inca_alias/_search
 {
   "query": {
       "term": {
         "_id": id_to_match
+      }
+  }
+}
+
+GET inca_alias/_search
+{
+  "query": {
+      "terms": {
+        "_id": [id_to_match_1, id_to_match_2]
       }
   }
 }
@@ -317,7 +326,8 @@ GET inca_alias/_search
 ```
 
 
-- count of outlet documents which were (re-)tweeted 1+ times (note: this query doesn't count the number of (re-)tweet instances)
+- count of outlet documents which were (re-)tweeted 1+ times by outlet (note: this query doesn't count the number of (re-)tweet instances)
+- also shows overall min and max match count
 ```
 GET inca_alias/_search?size=0
 {
@@ -325,10 +335,23 @@ GET inca_alias/_search?size=0
     "categories": {
       "terms": {
         "field": "doctype",
-        "order": { "_key": "asc" },
+        "order": {
+          "_key": "asc"
+        },
         "size": 13
       }
-  }},
+    },
+    "min_match": {
+      "min": {
+        "field": "tweets2_url_match_count"
+      }
+    },
+    "max_match": {
+      "max": {
+        "field": "tweets2_url_match_count"
+      }
+    }
+  },
   "query": {
     "bool": {
       "filter": [
@@ -359,6 +382,90 @@ GET inca_alias/_search?size=0
         {
           "term": {
             "tweets2_url_match_ind": "true"
+          }
+        }
+      ]
+    }
+  }
+}
+```
+
+### search queries with selected fields
+
+- outlet documents
+```
+GET inca_alias/_search
+{
+  "_source": [
+    "_id",
+    "title",
+    "should_include",
+    "article_maintext_4_missing", 
+    "ap_syndicated",
+    "fetch_error",
+    "is_generic_url", 
+    "article_maintext_4", 
+    "url",
+    "resolved_url",
+    "standardized_url",
+    "standardized_url_2"
+  ],
+  "aggs": {
+    "categories": {
+      "terms": {
+        "field": "doctype",
+        "order": { "_key": "asc" },
+        "size": 13
+      }
+  }},
+  "query": {
+    "bool": {
+      "filter": [
+        {
+          "term": {
+            "standardized_url.keyword": "www.washingtonexaminer.com/tag/donald-trump"
+          }
+        },
+        {
+          "term": {
+            "doctype": "washingtonexaminer"
+          }
+        },
+        {
+          "term": {
+            "should_include": "false"
+          }
+        }
+      ]
+    }
+  }
+}
+```
+
+- `tweets2_url` documents
+
+```
+GET inca_alias/_search
+{
+  "_source": [
+    "_id",
+    "title",
+    "resolved_url",
+    "standardized_url",
+    "standardized_url_2",
+    "tweets2_url_ids"
+  ],
+  "query": {
+    "bool": {
+      "filter": [
+        {
+          "term": {
+            "resolved_url.keyword":  "https://www.washingtonexaminer.com/tag/donald-trump?source=%2Ftrump-to-order-government-wide-review-of-wasteful-spending%2Farticle%2F2617196"
+          }
+        },
+        {
+          "term": {
+            "doctype": "tweets2_url"
           }
         }
       ]
