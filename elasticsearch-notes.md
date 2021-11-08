@@ -264,6 +264,59 @@ GET inca_alias/_search
 }
 ```
 
+- count and percent of documents per outlet which are labeled as `ap_syndicated` by Media Cloud
+```
+GET inca_alias/_search
+{
+  "size": 0,
+  "query": {
+    "terms": {
+      "doctype": [
+        "americanrenaissance",
+        "breitbart",
+        "dailycaller",
+        "dailystormer",
+        "foxnews",
+        "gatewaypundit",
+        "infowars",
+        "newsmax",
+        "oneamericanews",
+        "rushlimbaugh",
+        "seanhannity",
+        "vdare",
+        "washingtonexaminer"
+      ]
+    }
+  },
+  "aggs": {
+    "categories": {
+      "terms": {
+        "field": "doctype",
+        "order": { "_key": "asc" },
+        "size": 13
+      },
+      "aggs": {
+        "count_ap": {
+          "sum": {
+            "field": "ap_syndicated"
+          }
+        },
+        "perc_ap": {
+          "bucket_script": {
+            "buckets_path": {
+              "ap_syndicated": "count_ap",
+              "total": "_count"
+            },
+            "script": "(params.ap_syndicated / params.total) * 100"
+          }
+        }
+      }
+    }
+  }
+}
+```
+
+
 - count of outlet documents which were (re-)tweeted 1+ times (note: this query doesn't count the number of (re-)tweet instances)
 ```
 GET inca_alias/_search?size=0
