@@ -104,7 +104,7 @@ from inca import Inca
 myinca = Inca()
 ```
 
-### 3. Scrape media outlets' URLs
+### 3. Expand URLs which were (re-)tweeted by congressional Republicans
 
 1. Log into the JupyterLab container as root
 
@@ -113,6 +113,37 @@ docker exec -it --user root inca-myusername /bin/bash
 ```
 
 2. Install `tmux` and `ncdu` (optional)
+```
+apt-get update && \
+apt-get install -y tmux ncdu
+```
+3. Navigate to the directory containing the URL expansion script (`04-expand-urls.py`)
+```
+cd /home/jovyan/work/us-right-media-dev/usrightmedia/code/02-twitter
+```
+
+4. Create terminal with `tmux`
+```
+tmux new -s expand_tweeted_urls        # creates a terminal named "expand_tweeted_urls"
+conda activate usrightmedia            # activate the usrightmedia environment
+python 04_expand_tweeted_urls.py &     # run the script as a background process using "&"
+```
+- Useful `tmux` commands:
+  - Re-attach: `tmux attach -t <name>`
+  - Detach from a `tmux` terminal: `Ctrl-b + d `
+  - To kill a pane: `Ctrl-b + x`
+  - To cleanly and gracefully kill all tmux open sessions (and server): `tmux kill-server`
+  - Kill the scraping processes by finding the relevant PIDs: `ps -ef | grep python` and then run `kill <PID>`
+
+### 4. Scrape media outlets' URLs
+
+1. Log into the JupyterLab container as root
+
+```
+docker exec -it --user root inca-myusername /bin/bash
+```
+
+2. If needed, install `tmux` and `ncdu` (optional)
 ```
 apt-get update && \
 apt-get install -y tmux ncdu
@@ -152,12 +183,7 @@ tmux new -s scrape_2020
 conda activate usrightmedia
 python scrape_2020.py & 
 ```
-- Useful `tmux` commands:
-  - Re-attach: `tmux attach -t <name>`
-  - Detach from a `tmux` terminal: `Ctrl-b + d `
-  - To kill a pane: `Ctrl-b + x`
-  - To cleanly and gracefully kill all tmux open sessions (and server): `tmux kill-server`
-  - Kill the scraping processes by finding the relevant PIDs: `ps -ef | grep python` and then run `kill <PID>`
+
 ## Copy the data files (restricted)
 - Access is limited to project collaborators who have SSH access to the Amsterdam School of Communication Research server (tux02ascor.fmg.uva.nl)
 - Terms of Use:
