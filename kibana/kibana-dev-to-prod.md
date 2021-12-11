@@ -3414,15 +3414,6 @@ docker start elasticsearch-wailam
           "article_maintext_is_empty": {
             "type": "boolean"
           },
-          "article_maintext_multireplace": {
-            "type": "text",
-            "fields": {
-              "exact": {
-                "type": "text",
-                "analyzer": "whitespace"
-              }
-            }
-          },
           "attachments": {
             "properties": {
               "media": {
