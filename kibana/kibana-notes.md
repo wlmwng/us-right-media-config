@@ -10,7 +10,7 @@
 ## Mapping
 
 ### Case 1: no `inca_alias` index has been created yet (INCA scraping has not started)
-1. Copy-paste the HTTP request in `inca-index-and-mapping.txt` into Dev Tools
+1. In Kibana's Dev Tools, use `PUT /inca` followed by the content in `inca-index-and-mapping.json`
 2. Add the alias
 ```
 POST _aliases
@@ -33,7 +33,7 @@ The project version of INCA connects automatically to `inca_alias`. When scrapin
 
 To make `inca_alias` become an actual alias rather than an index:
 1. Stop scraping
-2. Copy-paste the HTTP request in `inca-index-and-mapping.txt` into Dev Tools
+2. use `PUT /inca` followed by the content in `inca-index-and-mapping.json`
 3. Re-index the old `inca_alias` index into the new `inca` index
 
 ```
