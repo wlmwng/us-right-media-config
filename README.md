@@ -119,7 +119,7 @@ apt-get install -y tmux ncdu
 ```
 3. Navigate to the directory containing the URL expansion script (`04-expand-urls.py`)
 ```
-cd /home/jovyan/work/us-right-media-dev/usrightmedia/code/02-twitter
+cd /home/jovyan/work/us-right-media/usrightmedia/code/02-twitter
 ```
 
 4. Create terminal with `tmux`
