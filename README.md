@@ -6,13 +6,15 @@ The exceptions are the two INCA files, `dockerfile-inca` and `requirements-docke
 ## Clone the project-related repositories
 - create a new directory on your machine and clone these four repos into it. The `inca`, `urlExpander`, and `us-right-media` subdirectories will be mounted to the JupyterLab container. <br>
   - https://github.com/wlmwng/inca (`usrightmedia/[branch]`)
-  - https://github.com/wlmwng/urlExpander (`develop`)
+  - https://github.com/wlmwng/urlExpander (`news_api`)
   - https://github.com/wlmwng/us-right-media (`develop`)
-  - https://github.com/wlmwng/us-right-media-config (`local`)
-    - `docker-compose.yml` does not have memory limits as it runs on the server
-    - `docker-compose-local.yml` is useful for local testing by limiting each container's memory usage to 2GB. Remove the existing `docker-compose.yml` and rename `docker-compose-local.yml` to `docker-compose.yml`.
-
-- If you're reviewing a PR, please use `git switch <branch>` to see that version of the repo.
+  - https://github.com/wlmwng/us-right-media-config (`main`)
+    - `docker-compose.yml` does not have memory limits as it runs on the server <br>
+      `docker-compose up -d`
+    - `docker-compose-dev.yml` does not have memory limits as it runs on the server <br>
+      `docker-compose -f docker-compose-dev.yml up -d`
+    - `docker-compose-local.yml` is useful for local testing by limiting each container's memory usage to 2GB <br>
+      `docker-compose -f docker-compose-local.yml up -d`
 
 ## Create the Docker containers
 ### 1. Setup the config directory
@@ -102,7 +104,7 @@ from inca import Inca
 myinca = Inca()
 ```
 
-### 3. Scrape media outlets' URLs
+### 3. Expand URLs which were (re-)tweeted by congressional Republicans
 
 1. Log into the JupyterLab container as root
 
@@ -111,6 +113,37 @@ docker exec -it --user root inca-myusername /bin/bash
 ```
 
 2. Install `tmux` and `ncdu` (optional)
+```
+apt-get update && \
+apt-get install -y tmux ncdu
+```
+3. Navigate to the directory containing the URL expansion script (`04-expand-urls.py`)
+```
+cd /home/jovyan/work/us-right-media/usrightmedia/code/02-twitter
+```
+
+4. Create terminal with `tmux`
+```
+tmux new -s expand_tweeted_urls        # creates a terminal named "expand_tweeted_urls"
+conda activate usrightmedia            # activate the usrightmedia environment
+python 04_expand_tweeted_urls.py &     # run the script as a background process using "&"
+```
+- Useful `tmux` commands:
+  - Re-attach: `tmux attach -t <name>`
+  - Detach from a `tmux` terminal: `Ctrl-b + d `
+  - To kill a pane: `Ctrl-b + x`
+  - To cleanly and gracefully kill all tmux open sessions (and server): `tmux kill-server`
+  - Kill the scraping processes by finding the relevant PIDs: `ps -ef | grep python` and then run `kill <PID>`
+
+### 4. Scrape media outlets' URLs
+
+1. Log into the JupyterLab container as root
+
+```
+docker exec -it --user root inca-myusername /bin/bash
+```
+
+2. If needed, install `tmux` and `ncdu` (optional)
 ```
 apt-get update && \
 apt-get install -y tmux ncdu
@@ -150,12 +183,7 @@ tmux new -s scrape_2020
 conda activate usrightmedia
 python scrape_2020.py & 
 ```
-- Useful `tmux` commands:
-  - Re-attach: `tmux attach -t <name>`
-  - Detach from a `tmux` terminal: `Ctrl-b + d `
-  - To kill a pane: `Ctrl-b + x`
-  - To cleanly and gracefully kill all tmux open sessions (and server): `tmux kill-server`
-  - Kill the scraping processes by finding the relevant PIDs: `ps -ef | grep python` and then run `kill <PID>`
+
 ## Copy the data files (restricted)
 - Access is limited to project collaborators who have SSH access to the Amsterdam School of Communication Research server (tux02ascor.fmg.uva.nl)
 - Terms of Use:
@@ -198,17 +226,17 @@ rsync -chavzP --stats <USERNAME>@tux02ascor.fmg.uva.nl:/home/wailam/us-right-med
 tar -xvzf 02-intermediate-data.tar.gz
 ```
 
-### `esdata-wailam-20211020-fixed-indices.tar.gz` (3.3GB): copy a snapshot of the collected data to hydrate a local Elasticsearch container
+### `esdata-wailam-20211210.tar.gz` (6.1GB): copy a snapshot of the collected data to hydrate a local Elasticsearch container
 - The compressed tar archive is a backup of a Docker volume. It contains:
   - 889,739 tweet objects from the accounts of congressional Republicans
-  - 221,460 scraped documents from 13 outlets
+  - 924,028 scraped documents from 13 outlets
     |Publish year|Count|
-    |----|------|
-    |2016|45,744|
-    |2017|42,370|
-    |2018|45,559| 
-    |2019|43,424| 
-    |2020|44,363| 
+    |----|-------|
+    |2016|153,352|
+    |2017|185,598|
+    |2018|165,953| 
+    |2019|160,389| 
+    |2020|258,736| 
 
 1. make a `volumes_backup` directory
 ```
@@ -216,11 +244,9 @@ cd <PATH-TO-CLONED-REPO>
 mkdir volumes_backup
 ```
 
-2. use rsync to transfer the file to your machine (backup file from October 20, 2021)
+2. use rsync to transfer the file to your machine
 ```
-rsync -chavzP --stats <USERNAME>@tux02ascor.fmg.uva.nl:/home/wailam/volumes_backup/esdata-wailam-20211020-fixed-indices.tar.gz <PATH-TO-CLONED-REPO>/volumes_backup
+rsync -chavzP --stats <USERNAME>@tux02ascor.fmg.uva.nl:/home/wailam/volumes_backup/esdata-wailam-20211210.tar.gz <PATH-TO-CLONED-REPO>/volumes_backup
 ```
 
 3. restore the Elasticsearch container by removing any existing data volume and replacing it with a new volume containing the backup data [(see the demo instructions)](https://github.com/wlmwng/docker-elastic-demo#restore-from-backup)
-
-**Once scraping completes, the `esdata-wailam-20211020-fixed-indices.tar.gz` will be replaced with a backup containing all (re-)tweets and scraped articles. The Elasticsearch documents containing media outlet articles will have a `googleword2vec_article_maintext` key (for news event clustering).**
