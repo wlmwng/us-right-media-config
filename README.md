@@ -229,13 +229,13 @@ tar -xvzf 02-intermediate-data.tar.gz
 ### `esdata-wailam-20211210.tar.gz` (6.1GB): copy a snapshot of the collected data to hydrate a local Elasticsearch container
 - The compressed tar archive is a backup of a Docker volume. It contains:
   - 889,739 tweet objects from the accounts of congressional Republicans
-  - 924,028 scraped documents from 13 outlets
+  - 924,027 scraped documents from 13 outlets
     |Publish year|Count|
     |----|-------|
     |2016|153,352|
     |2017|185,598|
     |2018|165,953| 
-    |2019|160,389| 
+    |2019|160,388| 
     |2020|258,736| 
 
 1. make a `volumes_backup` directory
