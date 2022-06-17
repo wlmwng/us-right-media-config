@@ -9681,7 +9681,7 @@ docker start elasticsearch-wailam
 docker stop elasticsearch-wailam
 ```
 
-9) Backup the data before re-index
+9) Backup the data after re-index
 
 ```
 docker run --rm --volumes-from elasticsearch-wailam -v /home/wailam/volumes_backup:/backup ubuntu tar cvzf /backup/esdata-wailam-20211210.tar.gz /usr/share/elasticsearch/data
