@@ -73,7 +73,7 @@ pip install setuptools==57.5.0
 ```
 pip install -r ./inca/requirements-docker.txt
 ```
-9. Workaround the error which oddly says that ipython 7.9.0 is incompatible
+9. Update ipython so it is compatible with ipykernel
 ```
 # ERROR: pip's dependency resolver does not currently take into account all the packages that are installed. 
 # This behaviour is the source of the following dependency conflicts.
