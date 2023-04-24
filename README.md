@@ -251,7 +251,7 @@ rsync -chavzP --stats <USERNAME>@tux02ascor.fmg.uva.nl:/home/wailam/volumes_back
 
 3. restore the Elasticsearch container by removing any existing data volume and replacing it with a new volume containing the backup data [(see the demo instructions)](https://github.com/wlmwng/docker-elastic-demo#restore-from-backup)
 
-### `esdata-wailam-20220616.tar.gz` (27 GB): copy a snapshot of the collected data to hydrate a local Elasticsearch container
+### `esdata-wailam-20230423.tar.gz` (35 GB): copy a snapshot of the collected data to hydrate a local Elasticsearch container
 - The compressed tar archive is a backup of a Docker volume. It contains:
   - 889,739 tweet objects from the accounts of congressional Republicans
   - 924,027 scraped documents from 13 outlets
@@ -262,7 +262,7 @@ rsync -chavzP --stats <USERNAME>@tux02ascor.fmg.uva.nl:/home/wailam/volumes_back
     |2018|165,953| 
     |2019|160,388| 
     |2020|258,736| 
-- This volume's data is used to produce the analyses. Article documents in this volume contain analysis-related fields such as `should_include`, `softcos06_id`, and `tweets2_url_ids`.
+- This volume's data is the final version of the dataset used to produce the analyses. Article documents in this volume contain analysis-related fields such as `should_include`, `softcos06_id`, and `tweets2_url_ids`.
 
 1. make a `volumes_backup` directory
 ```
